@@ -61,10 +61,10 @@ def parallel_prefix(n, G_0, P_0):
             counter = 0
 
     
-    return P_prime, G_prime
+    return G_prime
 
 
-def  sum_computation(n, H_0, P_prime, G_prime):
+def  sum_computation(n, H_0, G_prime):
 
     S = [0] * (n+1)
 
@@ -87,14 +87,14 @@ def binary_adder(n, A, B):
     G_0, P_0, H_0 = preprocessing(7, A_bin, B_bin)
 
     # Parallel-prefix stage
-    P_prime, G_prime = parallel_prefix(n, G_0, P_0)
+    G_prime = parallel_prefix(n, G_0, P_0)
 
     # Sum computation stage
-    S = sum_computation(n, H_0, P_prime, G_prime)
+    S = sum_computation(n, H_0, G_prime)
 
     return S
 
-A = 64
+A = 5
 B = 64
 
 print("S : ", binary_adder(7, A, B))
