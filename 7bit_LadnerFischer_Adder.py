@@ -1,4 +1,4 @@
-def int_to_binary_array(number, num_bits): # Int to Binary Table
+def int_to_binary_array(number, num_bits):  # Int to Binary Table
     binary_array = []
     for _ in range(num_bits):
         binary_array.insert(0, number & 1)
@@ -7,26 +7,33 @@ def int_to_binary_array(number, num_bits): # Int to Binary Table
     return binary_array
 
 
-def preprocessing(n, A, B):
-    G_0 = [0] * n
-    P_0 = [0] * n
-    H_0 = [0] * n
+def binary_array_to_int(bit_array):
+    decimal_value = 0
+    for bit in bit_array:
+        decimal_value = (decimal_value << 1) | bit
+    return decimal_value
+
+
+def preprocessing(n, a, b):
+    g_0 = [0] * n
+    p_0 = [0] * n
+    h_0 = [0] * n
 
     for i in range(n):
-        G_0[i] = A[i] and B[i]
-        P_0[i] = A[i] or B[i]
-        H_0[i] = not(G_0[i]) and P_0[i]
+        g_0[i] = a[i] and b[i]
+        p_0[i] = a[i] or b[i]
+        h_0[i] = not (g_0[i]) and p_0[i]
 
-    return G_0, P_0, H_0
+    return g_0, p_0, h_0
 
 
-def parallel_prefix(n, G_0, P_0):
-    P_prime = [0] * n
-    G_prime = [0] * n
+def parallel_prefix(n, g_0, p_0):
+    p_prime = [0] * n
+    g_prime = [0] * n
 
     for i in range(n):
-        P_prime[i] = P_0[i]
-        G_prime[i] = G_0[i]
+        p_prime[i] = p_0[i]
+        g_prime[i] = g_0[i]
 
     white_cells = 0
     black_cells = 0
@@ -34,16 +41,16 @@ def parallel_prefix(n, G_0, P_0):
 
     for i in range(0, 3):
 
-        for j in range ((n-1), -1, -1):
+        for j in range((n - 1), -1, -1):
 
-            if white_cells >= (2**i):
-                
-                if black_cells < (2**i):
+            if white_cells >= (2 ** i):
 
-                    G_prime[j] = G_prime[j] or (G_prime[j+1] and P_prime[j])
+                if black_cells < (2 ** i):
 
-                    if counter < (2**i):
-                        P_prime[j] = P_prime[j] and P_prime[j+1]
+                    g_prime[j] = g_prime[j] or (g_prime[j + 1] and p_prime[j])
+
+                    if counter < (2 ** i):
+                        p_prime[j] = p_prime[j] and p_prime[j + 1]
                         counter = counter + 1
 
                     black_cells = black_cells + 1
@@ -54,49 +61,52 @@ def parallel_prefix(n, G_0, P_0):
 
             else:
                 white_cells = white_cells + 1
-            
 
-            white_cells = 0
-            black_cells = 0
-            counter = 0
+            if j == 0:
+                white_cells = 0
+                black_cells = 0
+                counter = 0
 
-    
-    return G_prime
+    return g_prime
 
 
-def  sum_computation(n, H_0, G_prime):
+def sum_computation(n, h_0, g_prime):
+    s = [0] * (n + 1)
 
-    S = [0] * (n+1)
-
-    S[n] = H_0[n-1]
-    S[0] = G_prime[0]
+    s[n] = h_0[n - 1]
+    s[0] = g_prime[0]
 
     for i in range(1, n):
-        S[i] = G_prime[i] ^ H_0[i-1]
-        
+        s[i] = g_prime[i] ^ h_0[i - 1]
 
-    return S
+    return s
 
-def binary_adder(n, A, B):
 
+def binary_adder(n, a, b):
     # Converting DEC to BIN
-    A_bin = int_to_binary_array(A, n)
-    B_bin = int_to_binary_array(B, n)
+    a_bin = int_to_binary_array(a, n)
+    b_bin = int_to_binary_array(b, n)
 
     # Preprocessing stage
-    G_0, P_0, H_0 = preprocessing(7, A_bin, B_bin)
+    g_0, p_0, h_0 = preprocessing(7, a_bin, b_bin)
 
     # Parallel-prefix stage
-    G_prime = parallel_prefix(n, G_0, P_0)
+    g_prime = parallel_prefix(n, g_0, p_0)
 
     # Sum computation stage
-    S = sum_computation(n, H_0, G_prime)
+    s = sum_computation(n, h_0, g_prime)
 
-    return S
-
-A = 5
-B = 64
-
-print("S : ", binary_adder(7, A, B))
+    return s
 
 
+# Example numbers
+A = 63
+B = 21
+# print("S : ", binary_array_to_int(7, binary_adder(7, A, B))) # Example of A+B
+# print("S : ", binary_adder(7, A, B))
+
+for i in range(0, 65):
+    for j in range(0, 65):
+        print(i, "+", j, "=", binary_array_to_int(binary_adder(7, i, j)))
+        if (i+j) != (binary_array_to_int(binary_adder(7, i, j))):
+            print("Error!")
