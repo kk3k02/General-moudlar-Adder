@@ -14,9 +14,9 @@ def preprocessing_first_phase(n, A, B, K):
     K[0] = 0
 
     for i in range(n):
-        H[i] = A[i] ^ B[i]
         P[i] = A[i] | B[i]
         G[i] = A[i] & B[i]
+        H[i] = not(G[i]) | P[i]
 
     A_prim = [0] * n  # A' vector
     B_prim = [0] * (n + 1)  # B' vector
@@ -69,21 +69,24 @@ def parallel_prefix(n, P, G, P_prim, G_prim):
 def sum_computation(n, H, H_prim, C, C_prim):
     S = [0] * n
 
-    C_out = C_prim[0]
+    S[n-1] = H[n-1]
+    S[0] = C[1]
 
-    for i in range(n):
+    C_out = C[1]
+
+    for i in range(1, n-1):
         if C_out == 0:
-            S[i] = H[i] ^ C[i]
+            S[i] = H[i] ^ C[i+1]
         else:
-            S[i] = H_prim[i] ^ C_prim[i]
+            S[i] = H_prim[i] ^ C_prim[i+1]
 
     return S
 
 
 # Deklaracja zmiennych
 n = 4 # Number of bits
-A = int_to_binary_array(5, n) # A
-B = int_to_binary_array(11, n) # B
+A = int_to_binary_array(1, n) # A
+B = int_to_binary_array(2, n) # B
 K = int_to_binary_array(7, n) # K
 
 K, H, P, G, A_prim, B_prim, H_prim, P_prim, G_prim = preprocessing(n, A, B, K)
