@@ -41,9 +41,8 @@ def parallel_prefix(n, g_0, p_0):
 
     k = 0
 
-    while (2**k) < n:
+    while (2 ** k) < n:
         k = k + 1
-
 
     for i in range(0, k):
 
@@ -112,8 +111,8 @@ n = 3
 # print("S : ", binary_array_to_int(7, binary_adder(7, A, B))) # Example of A+B
 # print("S : ", binary_adder(7, A, B))
 
-for i in range(0, (2**n)):
-    for j in range(0, (2**n)):
+for i in range(0, (2 ** n)):
+    for j in range(0, (2 ** n)):
         print(i, "+", j, "=", binary_array_to_int(binary_adder(n, i, j)))
-        if (i+j) != (binary_array_to_int(binary_adder(n, i, j))):
+        if (i + j) != (binary_array_to_int(binary_adder(n, i, j))):
             print("Error!")
